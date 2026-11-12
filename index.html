@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dell 3110 Screw Map</title>
+<meta name="description" content="Choose a teardown step on the Dell Chromebook 3110 and hover over a screw to see its size.">
+<style>
+@font-face { font-family: "Barlow Semi Condensed"; font-weight: 500; font-display: swap;
+  src: url("fonts/barlow-semi-condensed-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Barlow Semi Condensed"; font-weight: 700; font-display: swap;
+  src: url("fonts/barlow-semi-condensed-latin-700-normal.woff2") format("woff2"); }
+
+:root {
+  --mat: #20596C;
+  --mat-deep: #184656;
+  --mat-line: rgba(255, 255, 255, .07);
+  --mat-ink: #E4F1F4;
+  --mat-soft: #B5D3DC;
+  --tray: #DCE3E1;
+  --well: #C4CFCC;
+  --well-edge: #A9B7B3;
+  --ink: #142A31;
+  --ink-soft: #3F565E;
+  --focus: #FFE36E;
+  --radius-tray: 14px;
+  --radius-well: 8px;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; }
+body {
+  color: var(--mat-ink);
+  background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mat-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  font: 500 17px/1.4 "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif;
+  display: flex; flex-direction: column; min-height: 100%;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+/* Header and steps */
+header { padding: 14px 20px 0; }
+h1 { margin: 0 0 10px; font-size: 26px; line-height: 1.15; font-weight: 700; }
+.steps { display: flex; gap: 4px; overflow-x: auto; padding: 3px; margin: 0 -3px; scrollbar-width: thin; }
+.step {
+  flex: none; display: flex; align-items: center; gap: 8px; padding: 7px 14px 7px 8px;
+  background: none; border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+  color: var(--mat-ink); white-space: nowrap;
+}
+.step:hover { background: var(--mat-deep); }
+.step b {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  border: 1.5px solid currentColor; font-size: 14px; font-weight: 700; line-height: 1;
+}
+.step[aria-selected="true"] { background: var(--tray); color: var(--ink); font-weight: 700; }
+.step .done { font-size: 14px; color: var(--mat-soft); }
+.step[aria-selected="true"] .done { color: var(--ink-soft); }
+
+/* Workspace */
+main {
+  flex: 1; min-height: 0; display: grid; gap: 16px; padding: 12px 20px 16px;
+  grid-template-columns: minmax(0, 1fr) 340px; align-items: start;
+}
+.bench { min-width: 0; }
+.bench-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; margin-bottom: 8px; min-height: 28px; }
+h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
+.setup { margin: 0; color: var(--mat-soft); max-width: 70ch; }
+
+.stage { position: relative; display: flex; justify-content: center; }
+.photo { position: relative; flex: none; touch-action: pan-y; }
+.photo img {
+  display: block; width: 100%; height: 100%; border-radius: 4px;
+  box-shadow: 0 10px 26px rgba(8, 32, 41, .5); user-select: none; -webkit-user-drag: none;
+}
+
+/* Empty state: outline of where the photo goes */
+.empty {
+  width: 100%; max-width: 860px; aspect-ratio: 3 / 2; display: grid; place-content: center; gap: 6px;
+  padding: 24px; text-align: center; border: 2px dashed var(--mat-soft); border-radius: 8px;
+}
+.empty strong { font-size: 21px; }
+.empty p { margin: 0 auto; max-width: 46ch; color: var(--mat-soft); }
+.empty code { font: inherit; font-weight: 700; color: var(--mat-ink); }
+
+/* Pins */
+.pin {
+  --size: 24px;
+  position: absolute; width: var(--size); height: var(--size); padding: 0; margin: 0;
+  transform: translate(-50%, -50%); cursor: pointer; border-radius: 50%;
+  background: var(--c); color: #10262D; border: 2px solid #fff;
+  box-shadow: 0 0 0 1.5px rgba(10, 30, 38, .85), 0 2px 5px rgba(0, 0, 0, .5);
+  font-size: 15px; font-weight: 700; line-height: 1; display: grid; place-items: center;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.pin::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
+.pin:hover, .pin:focus-visible, .pin.on { transform: translate(-50%, -50%) scale(1.25); z-index: 5; }
+.dim .pin:not(.on) { opacity: .24; }
+.labels .pin { width: auto; height: auto; min-width: var(--size); padding: 3px 7px; border-radius: 7px; font-size: 14px; white-space: nowrap; }
+.pin.picked { outline: 3px solid var(--focus); outline-offset: 2px; }
+.editing .pin { cursor: grab; touch-action: none; }
+.editing .pin:active { cursor: grabbing; }
+.editing .photo { cursor: crosshair; }
+
+/* Tooltip */
+.tip {
+  position: absolute; z-index: 10; width: 268px; padding: 11px 13px 12px; pointer-events: none;
+  background: #fff; color: var(--ink); border-radius: 8px; border-top: 6px solid var(--c);
+  box-shadow: 0 8px 22px rgba(6, 26, 34, .55);
+}
+.tip-photo { display: block; width: 100%; height: 104px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background: #E6EAEA; }
+.tip-size { font-size: 30px; line-height: 1.05; font-weight: 700; }
+.tip-look { color: var(--ink-soft); line-height: 1.25; margin-top: 2px; }
+.tip-name { font-weight: 700; margin-top: 3px; }
+.tip-holds { color: var(--ink-soft); line-height: 1.3; }
+.tip-qty { color: var(--ink-soft); margin-top: 4px; font-size: 15px; }
+
+/* Screw tray: one molded well per size */
+.tray {
+  background: var(--tray); color: var(--ink); border-radius: var(--radius-tray); padding: 12px;
+  box-shadow: 0 8px 20px rgba(8, 32, 41, .4), inset 0 1px 0 rgba(255, 255, 255, .7);
+}
+.tray h3 { margin: 2px 2px 8px; font-size: 18px; line-height: 1.2; font-weight: 700; }
+.well {
+  display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: start; gap: 2px 10px; padding: 8px;
+  margin-bottom: 8px; background: var(--well); border-radius: var(--radius-well);
+  box-shadow: inset 0 2px 5px rgba(50, 70, 66, .4); border: 1px solid var(--well-edge);
+}
+.well svg { grid-row: span 3; width: 70px; height: 74px; display: block; justify-self: center; }
+.well-photo { grid-row: span 3; width: 96px; height: 64px; object-fit: cover; display: block; border-radius: 6px; box-shadow: 0 1px 3px rgba(20, 42, 49, .35); }
+.well-look { margin: 0 0 2px; font-size: 14px; line-height: 1.2; color: var(--ink-soft); }
+.well-size { display: flex; align-items: center; gap: 7px; font-size: 22px; line-height: 1.15; font-weight: 700; }
+.chip {
+  flex: none; width: 23px; height: 23px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--c); border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(20, 42, 49, .75);
+  font-size: 13px; line-height: 1;
+}
+.lines { list-style: none; margin: 0; padding: 0; min-width: 0; }
+.line {
+  display: block; width: 100%; padding: 3px 5px; margin: 1px 0; text-align: left; line-height: 1.22;
+  background: none; border: 0; border-radius: 5px; cursor: pointer; color: var(--ink);
+}
+.line:hover, .line.on { background: #fff; }
+.line[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.line small { display: block; font-size: 14px; color: var(--ink-soft); }
+.line[aria-pressed="true"] small { color: #D4E2E6; }
+.tip-note { margin: 10px 2px 8px; line-height: 1.3; }
+.toggle { display: flex; align-items: center; gap: 8px; margin: 0 2px 2px; cursor: pointer; }
+.toggle input { width: 18px; height: 18px; accent-color: var(--mat); margin: 0; }
+.tray-foot { margin: 8px 2px 0; font-size: 15px; line-height: 1.25; color: var(--ink-soft); }
+.tray-foot a { color: inherit; }
+
+/* Screw line-up strip */
+.strip { margin: 0 0 10px; overflow-x: auto; scrollbar-width: thin; }
+.strip-inner { min-width: 640px; background: #E7E9E8; border-radius: 8px; padding: 4px 6px 3px; box-shadow: 0 6px 16px rgba(8, 32, 41, .35); }
+.strip-photo { position: relative; }
+.strip-photo img { display: block; width: 100%; height: auto; border-radius: 4px; user-select: none; -webkit-user-drag: none; }
+.bscrew {
+  position: absolute; top: 0; bottom: 0; padding: 0; margin: 0; cursor: pointer;
+  background: transparent; border: 0; border-radius: 7px; transition: background-color .12s ease, box-shadow .12s ease;
+}
+.strip.dim .bscrew:not(.on) { background: rgba(231, 233, 232, .78); }
+.bscrew.on { box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 6px var(--c); }
+.strip-labels { position: relative; height: 24px; }
+.blabel {
+  position: absolute; top: 2px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px;
+  font-size: 14.5px; font-weight: 700; line-height: 1; color: var(--ink); white-space: nowrap; pointer-events: none;
+}
+.blabel .chip { width: 18px; height: 18px; font-size: 11px; }
+.blabel.absent { opacity: .45; }
+.bscrew.absent { background: rgba(231, 233, 232, .55); }
+.strip.dim .blabel:not(.on) { opacity: .3; }
+
+/* Screw count page */
+.count { flex: 1; width: 100%; max-width: 1240px; padding: 12px 20px 20px; }
+.count > h2 { font-size: 24px; }
+.count > p { margin: 2px 0 12px; color: var(--mat-soft); }
+.count-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 14px; align-items: start; }
+.count-card {
+  display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 4px 12px; padding: 12px;
+  background: var(--tray); color: var(--ink); border-radius: var(--radius-tray); box-shadow: 0 8px 20px rgba(8, 32, 41, .4);
+}
+.count-card > img, .count-card > svg { grid-row: span 2; width: 140px; height: 94px; object-fit: cover; border-radius: 6px; display: block; }
+.count-card h3 { margin: 0; display: flex; align-items: center; gap: 7px; font-size: 22px; line-height: 1.15; }
+.count-card .well-look { margin: 2px 0 0; }
+.count-num { font-size: 30px; line-height: 1; font-weight: 700; }
+.count-num span { font-size: 17px; font-weight: 500; color: var(--ink-soft); }
+.count-card .lines { grid-column: 1 / -1; margin-top: 6px; padding: 4px; background: var(--well); border: 1px solid var(--well-edge); border-radius: var(--radius-well); }
+.count-card .line small { color: var(--mat); font-weight: 700; }
+.count-card .line small.note { color: var(--ink-soft); font-weight: 500; }
+
+/* Start page */
+.start {
+  flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px;
+  padding: 12px 20px 20px; align-items: start; width: 100%; max-width: 1240px;
+}
+.diagram { margin: 0; padding: 14px; background: #fff; border-radius: var(--radius-tray); box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
+.diagram-art { position: relative; width: min(100%, 472px, calc((100vh - 190px) * .756)); margin: 0 auto; }
+.diagram-art img { display: block; width: 100%; height: auto; }
+.callout {
+  position: absolute; width: 30px; height: 30px; padding: 0; transform: translate(-50%, -50%);
+  background: none; border: 3px solid transparent; border-radius: 50%; cursor: pointer;
+}
+.callout:hover, .callout.on { border-color: var(--mat); box-shadow: 0 0 0 3px var(--focus); }
+.diagram figcaption { margin-top: 8px; font-size: 14px; color: var(--ink-soft); text-align: center; }
+.parts { background: var(--tray); color: var(--ink); border-radius: var(--radius-tray); padding: 16px; box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
+.parts h2 { font-size: 24px; }
+.parts > p { margin: 4px 0 12px; color: var(--ink-soft); max-width: 60ch; }
+.parts ol { list-style: none; margin: 0 0 14px; padding: 0; }
+.part {
+  display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 0 10px; width: 100%; padding: 8px; margin: 0 0 4px;
+  text-align: left; background: var(--well); border: 1px solid var(--well-edge); border-radius: var(--radius-well); cursor: pointer; color: var(--ink);
+}
+.part:hover, .part.on { background: #fff; }
+.part b {
+  grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--mat); color: #fff; font-size: 16px; line-height: 1;
+}
+.part strong { font-size: 18px; line-height: 1.2; }
+.part span { line-height: 1.3; color: var(--ink-soft); }
+.part small { font-size: 14px; font-weight: 700; color: var(--mat); margin-top: 2px; }
+.parts .btn { font-size: 18px; padding: 9px 18px; }
+
+/* Pin editor */
+.editbar { display: none; }
+.editing .editbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 10px;
+  background: var(--mat-deep); border-radius: 8px;
+}
+.status { flex: 1 1 260px; margin: 0; min-width: 0; }
+.btn {
+  padding: 6px 12px; background: var(--tray); color: var(--ink); border: 0; border-radius: 6px;
+  font-weight: 700; cursor: pointer;
+}
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.go { background: var(--focus); }
+.btn.quiet { background: none; color: var(--mat-ink); box-shadow: inset 0 0 0 1px var(--mat-soft); }
+
+.line-row { display: flex; align-items: flex-start; gap: 4px; }
+.line-row .line { flex: 1; min-width: 0; }
+.line-del { flex: none; margin-top: 3px; padding: 2px 8px; font-size: 14px; background: none; color: var(--ink-soft); border: 1px solid var(--well-edge); border-radius: 5px; cursor: pointer; }
+.line-del:hover { background: #fff; color: var(--ink); }
+.line-tools { flex: none; display: flex; gap: 3px; }
+.line-tools .line-del { min-width: 28px; }
+.add { display: grid; gap: 8px; margin: 10px 0 4px; padding: 10px; background: #fff; border-radius: var(--radius-well); }
+.add h3 { margin: 0; }
+.add label { display: grid; gap: 2px; font-size: 15px; color: var(--ink-soft); }
+.add input, .add select { font: inherit; color: var(--ink); padding: 5px 8px; min-width: 0; background: #fff; border: 1px solid var(--well-edge); border-radius: 6px; }
+.add .btn { justify-self: start; }
+.add-msg { margin: 0; font-size: 15px; color: #8A2A1E; }
+
+@media (max-width: 860px) {
+  body { font-size: 16.5px; }
+  .count { padding: 10px 16px 16px; }
+  .count-card { grid-template-columns: 110px minmax(0, 1fr); }
+  .count-card > img, .count-card > svg { width: 110px; height: 74px; }
+  .start { grid-template-columns: minmax(0, 1fr); padding: 10px 16px 16px; }
+  .diagram-art { width: min(100%, 472px); }
+  header { padding: 12px 16px 0; }
+  main { grid-template-columns: minmax(0, 1fr); padding: 10px 16px 16px; }
+  .pin { --size: 23px; font-size: 13px; }
+  .setup { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) { .pin, .bscrew { transition: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dell Chromebook 3110 screw map</h1>
+  <div class="steps" id="steps" role="tablist" aria-label="Teardown steps"></div>
+</header>
+
+<section class="start" id="start" hidden>
+  <figure class="diagram">
+    <div class="diagram-art" id="diagram-art"></div>
+    <figcaption id="diagram-credit"></figcaption>
+  </figure>
+  <div class="parts">
+    <h2>What's inside</h2>
+    <p>Pick a part to see the screws that hold it, or start the teardown from the bottom.</p>
+    <ol id="parts-list"></ol>
+    <button class="btn go" id="begin" type="button">Start teardown</button>
+  </div>
+</section>
+
+<section class="count" id="count" hidden>
+  <h2>Every screw in this Chromebook</h2>
+  <p id="count-total"></p>
+  <div class="count-list" id="count-list"></div>
+</section>
+
+<main id="work">
+  <section class="bench" id="bench" role="tabpanel" aria-labelledby="view-title">
+    <div class="bench-head">
+      <h2 id="view-title"></h2>
+      <p class="setup" id="setup"></p>
+    </div>
+    <div class="strip" id="strip">
+      <div class="strip-inner">
+        <div class="strip-photo" id="strip-photo"></div>
+        <div class="strip-labels" id="strip-labels"></div>
+      </div>
+    </div>
+    <div class="stage" id="stage"></div>
+  </section>
+
+  <aside class="tray" aria-label="Screws in this step">
+    <h3 id="tray-title"></h3>
+    <div id="wells"></div>
+    <p class="tip-note" id="tip-note"></p>
+    <label class="toggle" id="labels-toggle"><input type="checkbox" id="labels"> Show sizes on all pins</label>
+    <p class="tray-foot" id="tray-foot"></p>
+  </aside>
+</main>
+
+<script src="screw-data.js"></script>
+<script src="pin-positions.js"></script>
+<script>
+(() => {
+  const DATA = window.SCREW_DATA;
+  const EDITING = false;
+  const DRAFT_KEY = "dell3110-pin-draft";
+  const EXTENSIONS = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG"];
+  const $ = id => document.getElementById(id);
+
+  let pins = structuredClone(window.PIN_POSITIONS || {});
+  const published = JSON.stringify(pins);
+  const START = { id: "start", tab: "Start" };
+  const COUNT = { id: "count", tab: "Screw count" };
+  const TABS = [START, ...DATA.views, COUNT];
+  const isStep = v => DATA.views.includes(v);
+  let view = TABS.find(v => "#" + v.id === location.hash) || START;
+  let photoEl = null;            // the .photo wrapper for the current view
+  let lockedPin = null;          // student mode: the pin opened by tap or click
+  let lockedGroup = null;        // student mode: the tray line opened by tap or click
+  let hoverGroup = null;         // student mode: the tray line under the pointer
+  let hoverSize = null;          // student mode: the screw in the line-up strip under the pointer
+  let lockedSize = null;         // student mode: the screw in the strip opened by tap or click
+  let selectedGroup = null;      // editor: the group new pins go to
+  let selectedPin = null;        // editor: the pin Remove and arrow keys act on
+  const undoStack = [];
+
+  const el = (tag, props = {}, ...kids) => {
+    const node = Object.assign(document.createElement(tag), props);
+    kids.flat().forEach(k => k != null && node.append(k));
+    return node;
+  };
+  /* Screws added in the editor are saved in the pin file under _added, so undo, drafts and downloads include them. */
+  const UNKNOWN = "Size not known yet";
+  const addedFor = v => ((pins._added ||= {})[v.id] ||= []);
+  const groupsFor = v => v.groups.concat((pins._added && pins._added[v.id]) || []);
+  const groupOf = id => DATA.views.flatMap(groupsFor).find(g => g.id === id);
+  const pinsFor = v => (pins[v.id] ||= []);
+  const placed = (v, g) => pinsFor(v).filter(p => p.g === g.id).length;
+  /* Counts changed in the editor are saved in the pin file under _qty. */
+  const qtyOf = g => (pins._qty && pins._qty[g.id]) ?? g.qty;
+  const total = v => groupsFor(v).reduce((n, g) => n + qtyOf(g), 0);
+  const EXTRA_COLORS = ["#B9A4FF", "#FFD38F", "#9FE6D2", "#FFA3A3", "#CBE27F", "#93BBFF"];
+
+  /* Sizes from screw-data.js, plus any new size typed into the editor. */
+  function sizeInfo(size) {
+    if (DATA.sizes[size]) return DATA.sizes[size];
+    const used = Object.values(DATA.sizes).map(s => s.key);
+    const m = /^M([\d.]+)x([\d.]+)$/.exec(size);
+    const extra = Object.values(DATA.sizes).filter(s => s.extra).length;
+    return (DATA.sizes[size] = {
+      key: size === UNKNOWN ? "?" : ("GHJKLMNPQRSTUVWXYZ".split("").find(k => !used.includes(k)) || "?"),
+      color: size === UNKNOWN ? "#C9D3D6" : EXTRA_COLORS[extra % EXTRA_COLORS.length],
+      d: m ? +m[1] : null, l: m ? +m[2] : null, unknown: !m, extra: true
+    });
+  }
+  const sizeTitle = size => size === "Captive" ? "Captive screw" : size;
+  const lookText = s => [s.look, s.label].filter(Boolean).map(t => t.replace(/\.$/, "")).join(". ");
+  const normalizeSize = text => text.trim().replace(/\s+/g, "").replace(/^m/, "M").replace(/[X×*]/, "x");
+
+  /* Draft storage for the editor. The page still works if the browser blocks it. */
+  const store = {
+    read() { try { return localStorage.getItem(DRAFT_KEY); } catch { return null; } },
+    write(text) { try { localStorage.setItem(DRAFT_KEY, text); } catch {} },
+    clear() { try { localStorage.removeItem(DRAFT_KEY); } catch {} }
+  };
+
+  /* A side view of the screw. All sizes share one scale so lengths compare honestly. */
+  function screwArt(size) {
+    const s = sizeInfo(size), W = 70, H = 74, mm = 10;
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.setAttribute("aria-hidden", "true");
+    const add = (name, attrs) => {
+      const n = document.createElementNS(ns, name);
+      Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v));
+      svg.append(n);
+    };
+    const captive = s.d == null && !s.unknown;
+    const d = (s.d ?? 2) * mm, len = (s.l ?? (captive ? 4.4 : 4)) * mm;
+    const headW = d * 2.1, headH = d * .62, top = (H - headH - len) / 2, cx = W / 2;
+    add("rect", { x: cx - d / 2, y: top + headH, width: d, height: len, fill: "#8E9CA2" });
+    if (captive) {
+      add("rect", { x: cx - d * .3, y: top + headH, width: d * .6, height: len * .42, fill: "#6F7F86" });
+      add("rect", { x: cx - d * .3 - 1, y: top + headH, width: 1, height: len * .42, fill: "#C4CFCC" });
+    }
+    const start = top + headH + (captive ? len * .42 : 1);
+    for (let y = start + 1; y < top + headH + len - 1; y += 3.4)
+      add("line", { x1: cx - d / 2, y1: y + 1.4, x2: cx + d / 2, y2: y - .6, stroke: "#4F5F66", "stroke-width": 1.1 });
+    add("path", { d: `M${cx - headW / 2} ${top + headH} q0 ${-headH} ${headH * .9} ${-headH} h${headW - headH * 1.8} q${headH * .9} 0 ${headH * .9} ${headH} z`, fill: "#A6B3B8", stroke: "#4F5F66", "stroke-width": 1 });
+    if (s.unknown) {
+      const q = document.createElementNS(ns, "text");
+      Object.entries({ x: cx, y: top + headH + len * .62, "text-anchor": "middle", "font-size": 22, "font-weight": 700, fill: "#142A31" }).forEach(([k, v]) => q.setAttribute(k, v));
+      q.textContent = "?";
+      svg.append(q);
+    }
+    return svg;
+  }
+
+  /* Steps */
+  function renderSteps() {
+    const bar = $("steps");
+    bar.replaceChildren(...TABS.map((v, i) => {
+      const btn = el("button", { className: "step", type: "button", id: "step-" + v.id, role: "tab" },
+        isStep(v) ? el("b", { textContent: i }) : null, v.tab);
+      if (EDITING && isStep(v)) btn.append(el("span", { className: "done", textContent: `${pinsFor(v).length}/${total(v)}` }));
+      btn.setAttribute("aria-selected", v === view);
+      btn.tabIndex = v === view ? 0 : -1;
+      btn.addEventListener("click", () => go(v));
+      return btn;
+    }));
+  }
+  $("steps").addEventListener("keydown", e => {
+    const i = TABS.indexOf(view), last = TABS.length - 1;
+    const next = { ArrowRight: i === last ? 0 : i + 1, ArrowLeft: i === 0 ? last : i - 1, Home: 0, End: last }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    go(TABS[next]);
+    $("step-" + view.id).focus();
+  });
+
+  function go(v) {
+    view = v; lockedPin = lockedGroup = hoverGroup = hoverSize = lockedSize = selectedPin = null;
+    selectedGroup = isStep(v) ? nextOpenGroup() : null;
+    if (!isStep(v)) photoEl = null;
+    history.replaceState(null, "", location.pathname + location.search + (v === START ? "" : "#" + v.id));
+    render();
+  }
+
+  /* Photo */
+  function findPhoto(base, ok, fail, i = 0) {
+    if (i >= EXTENSIONS.length) return fail();
+    const img = new Image();
+    img.alt = view.title + ": " + view.setup;
+    img.draggable = false;
+    img.onload = () => ok(img);
+    img.onerror = () => findPhoto(base, ok, fail, i + 1);
+    img.src = `images/${base}.${EXTENSIONS[i]}`;
+  }
+
+  function renderStage() {
+    const stage = $("stage"), asked = view;
+    photoEl = null;
+    stage.replaceChildren();
+    stage.classList.remove("dim");
+    findPhoto(view.photo, img => {
+      if (asked !== view) return;
+      photoEl = el("div", { className: "photo" }, img);
+      stage.replaceChildren(photoEl, el("div", { className: "tip", id: "tip", hidden: true }));
+      fit();
+      renderPins();
+      if (EDITING) photoEl.addEventListener("click", placePin);
+      status();
+    }, () => {
+      if (asked !== view) return;
+      stage.replaceChildren(el("div", { className: "empty" },
+        el("strong", { textContent: EDITING ? "Add this photo to place pins" : "Photo coming soon" }),
+        EDITING
+          ? [el("p", {}, "Upload ", el("code", { textContent: `images/${view.photo}.jpg` }), " to the repository, then reload this page."),
+             el("p", { textContent: view.shot })]
+          : el("p", { textContent: "The screw sizes for this step are listed in the tray." })));
+      status();
+    });
+  }
+
+  function fit() {
+    if (!photoEl) return;
+    const img = photoEl.querySelector("img"), stage = $("stage");
+    const narrow = matchMedia("(max-width: 860px)").matches;
+    const roomH = narrow ? Infinity : Math.max(320, innerHeight - stage.getBoundingClientRect().top - scrollY - 16);
+    const scale = Math.min(stage.clientWidth / img.naturalWidth, roomH / img.naturalHeight);
+    photoEl.style.width = Math.round(img.naturalWidth * scale) + "px";
+    photoEl.style.height = Math.round(img.naturalHeight * scale) + "px";
+  }
+  addEventListener("resize", () => { fit(); hideTip(); });
+
+  /* Pins */
+  function renderPins() {
+    if (!photoEl) return;
+    photoEl.querySelectorAll(".pin").forEach(p => p.remove());
+    $("stage").classList.toggle("labels", $("labels").checked);
+    pinsFor(view).forEach(pin => {
+      const g = groupOf(pin.g);
+      if (!g) return;
+      const s = sizeInfo(g.size);
+      const btn = el("button", { className: "pin", type: "button", textContent: $("labels").checked ? g.size : "" });
+      btn.style.left = pin.x + "%";
+      btn.style.top = pin.y + "%";
+      btn.style.setProperty("--c", s.color);
+      btn.dataset.group = g.id;
+      btn.setAttribute("aria-label", `${g.size}. ${g.name}. ${g.holds}`);
+      btn._pin = pin;
+      if (pin === selectedPin) btn.classList.add("picked");
+      if (EDITING) {
+        wireEditorPin(btn, pin);
+      } else {
+        btn.addEventListener("pointerenter", () => { if (!lockedPin) showTip(btn); });
+        btn.addEventListener("pointerleave", () => { if (!lockedPin) hideTip(); });
+        btn.addEventListener("focus", () => { if (!lockedPin) showTip(btn); });
+        btn.addEventListener("blur", () => { if (lockedPin === btn) lockedPin = null; hideTip(); });
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          lockedPin = lockedPin === btn ? null : btn;
+          lockedPin ? showTip(btn) : hideTip();
+        });
+      }
+      photoEl.append(btn);
+    });
+    applyHighlight();
+  }
+
+  function showTip(btn) {
+    const tip = $("tip"), g = groupOf(btn.dataset.group), s = sizeInfo(g.size);
+    if (!tip) return;
+    const line = (className, textContent) => el("div", { className, textContent });
+    tip.replaceChildren(
+      s.photo ? el("img", { className: "tip-photo", src: `images/${s.photo}.jpg`, alt: "" }) : null,
+      line("tip-size", sizeTitle(g.size)),
+      s.look ? line("tip-look", lookText(s)) : null,
+      line("tip-name", g.name),
+      line("tip-holds", g.holds),
+      line("tip-qty", `${qtyOf(g)} ${qtyOf(g) === 1 ? "screw" : "screws"} in this group`));
+    tip.style.setProperty("--c", s.color);
+    tip.hidden = false;
+    const stage = $("stage").getBoundingClientRect(), pin = btn.getBoundingClientRect();
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    const x = Math.min(Math.max(0, pin.left + pin.width / 2 - stage.left - tw / 2), stage.width - tw);
+    const above = pin.top - stage.top - th - 12;
+    tip.style.left = x + "px";
+    tip.style.top = (above >= 0 ? above : pin.bottom - stage.top + 12) + "px";
+    hoverGroup = g.id;
+    btn.classList.add("on");
+    applyHighlight();
+  }
+
+  function hideTip() {
+    const tip = $("tip");
+    if (tip) tip.hidden = true;
+    if (lockedPin) return;
+    hoverGroup = null;
+    applyHighlight();
+  }
+
+  /* Links the tray and the photo: hovering either one lights up the other. */
+  /* A tray line or pin lights up one group. A screw in the strip lights up every group of that size. */
+  function applyHighlight() {
+    if (EDITING) return;
+    const activeGroup = hoverSize ? null : (hoverGroup || lockedGroup);
+    const ag = activeGroup && groupOf(activeGroup);
+    const activeSize = hoverSize || (ag ? ag.size : lockedSize);
+    const lit = id => activeGroup ? id === activeGroup : !!activeSize && (groupOf(id) || {}).size === activeSize;
+    const stage = $("stage");
+    stage.classList.toggle("dim", !!(activeGroup || activeSize));
+    stage.querySelectorAll(".pin").forEach(p => p.classList.toggle("on", lit(p.dataset.group)));
+    document.querySelectorAll(".line").forEach(l => l.classList.toggle("on", lit(l.dataset.group)));
+    $("strip").classList.toggle("dim", !!activeSize);
+    document.querySelectorAll(".bscrew, .blabel").forEach(b => b.classList.toggle("on", b.dataset.size === activeSize));
+  }
+
+  /* Line-up strip: one photo of every screw, with a bracket around the one in use. */
+  function renderBanner() {
+    const B = DATA.banner, box = $("strip-photo"), labels = $("strip-labels");
+    if (!B) { $("strip").hidden = true; return; }
+    if (!box.querySelector("img")) {
+      const img = el("img", { src: `images/${B.photo}.jpg`, alt: "Every screw in this Chromebook, lined up side by side", draggable: false });
+      img.onerror = () => { $("strip").hidden = true; };
+      box.append(img);
+    }
+    const used = new Set(groupsFor(view).map(g => g.size));
+    box.querySelectorAll(".bscrew").forEach(b => b.remove());
+    labels.replaceChildren();
+    B.items.forEach(it => {
+      const s = sizeInfo(it.size);
+      const b = el("button", { className: "bscrew", type: "button" });
+      Object.assign(b.style, { left: (it.x - it.w / 2) + "%", width: it.w + "%" });
+      b.style.setProperty("--c", s.color);
+      b.dataset.size = it.size;
+      b.setAttribute("aria-label", `${sizeTitle(it.size)}. ${lookText(s)}${used.has(it.size) ? "" : " Not used in this step."}`);
+      if (!used.has(it.size)) b.classList.add("absent");
+      if (!EDITING) {
+        b.addEventListener("pointerenter", () => { hoverSize = it.size; applyHighlight(); });
+        b.addEventListener("pointerleave", () => { hoverSize = null; applyHighlight(); });
+        b.addEventListener("focus", () => { hoverSize = it.size; applyHighlight(); });
+        b.addEventListener("blur", () => { hoverSize = null; applyHighlight(); });
+        b.addEventListener("click", () => { lockedSize = lockedSize === it.size ? null : it.size; lockedGroup = null; applyHighlight(); });
+      }
+      box.append(b);
+      const chip = el("span", { className: "chip" });
+      chip.style.setProperty("--c", s.color);
+      const label = el("span", { className: "blabel" + (used.has(it.size) ? "" : " absent") }, chip, it.size);
+      label.style.left = it.x + "%";
+      label.dataset.size = it.size;
+      labels.append(label);
+    });
+  }
+
+  /* Start page */
+  function markPart(n) {
+    document.querySelectorAll("[data-part]").forEach(e => e.classList.toggle("on", +e.dataset.part === n));
+  }
+  function renderStart() {
+    if ($("parts-list").children.length) return;
+    const D = DATA.diagram, art = $("diagram-art");
+    art.append(el("img", { src: `images/${D.photo}`, alt: "Exploded view of the Dell Chromebook 3110 with six numbered parts" }));
+    $("diagram-credit").textContent = D.credit;
+    DATA.parts.forEach(p => {
+      const step = DATA.views.find(v => v.id === p.step);
+      const n = DATA.views.indexOf(step) + 1;
+      const wire = (node, label) => {
+        node.dataset.part = p.n;
+        node.setAttribute("aria-label", label);
+        node.addEventListener("pointerenter", () => markPart(p.n));
+        node.addEventListener("pointerleave", () => markPart(null));
+        node.addEventListener("focus", () => markPart(p.n));
+        node.addEventListener("blur", () => markPart(null));
+        node.addEventListener("click", () => go(step));
+      };
+      const callout = el("button", { className: "callout", type: "button" });
+      Object.assign(callout.style, { left: p.x + "%", top: p.y + "%" });
+      wire(callout, `${p.n}. ${p.name}. Go to step ${n}, ${step.tab}`);
+      art.append(callout);
+      const btn = el("button", { className: "part", type: "button" },
+        el("b", { textContent: p.n }), el("strong", { textContent: p.name }), el("span", { textContent: p.text }),
+        el("small", { textContent: `Step ${n}: ${step.tab}` }));
+      wire(btn, `${p.n}. ${p.name}. ${p.text} Go to step ${n}, ${step.tab}`);
+      $("parts-list").append(el("li", {}, btn));
+    });
+    $("begin").addEventListener("click", () => go(DATA.views[0]));
+  }
+
+  /* Screw count page: every size, its total, and where each group goes. */
+  function openGroup(v, g) {
+    go(v);
+    if (!EDITING) { lockedGroup = g.id; renderTray(); applyHighlight(); }
+  }
+  function renderCount() {
+    const all = DATA.views.flatMap(v => groupsFor(v).map(g => ({ v, g })));
+    const order = DATA.banner ? DATA.banner.items.map(i => i.size) : [];
+    const sizes = [...new Set(order.concat(all.map(a => a.g.size)))].filter(z => all.some(a => a.g.size === z));
+    const grand = all.reduce((n, a) => n + qtyOf(a.g), 0);
+    $("count-total").textContent = `${grand} screws in all, in ${sizes.length} sizes. Pick a location to see those screws on the photo.`;
+    $("count-list").replaceChildren(...sizes.map(size => {
+      const s = sizeInfo(size), rows = all.filter(a => a.g.size === size);
+      const n = rows.reduce((t, a) => t + qtyOf(a.g), 0);
+      let art = screwArt(size);
+      if (s.photo) {
+        art = el("img", { src: `images/${s.photo}.jpg`, alt: "" });
+        art.onerror = () => art.replaceWith(screwArt(size));
+      }
+      const dot = el("span", { className: "chip" });
+      dot.style.setProperty("--c", s.color);
+      const lines = el("ul", { className: "lines" }, rows.map(({ v, g }) => {
+        const btn = el("button", { className: "line", type: "button" }, `${qtyOf(g)} × ${g.name}`,
+          g.note ? el("small", { className: "note", textContent: g.note }) : null,
+          el("small", { textContent: `Step ${DATA.views.indexOf(v) + 1}: ${v.tab}` }));
+        btn.addEventListener("click", () => openGroup(v, g));
+        return el("li", {}, btn);
+      }));
+      return el("article", { className: "count-card" }, art,
+        el("div", {}, el("h3", {}, dot, sizeTitle(size)), s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null),
+        el("div", { className: "count-num" }, String(n), el("span", { textContent: n === 1 ? " screw" : " screws" })),
+        lines);
+    }));
+  }
+
+  /* Tray */
+  function renderTray() {
+    $("view-title").textContent = view.title;
+    $("setup").textContent = view.setup;
+    $("tray-title").textContent = "Screws in this step";
+    $("tip-note").textContent = view.tip;
+    const groups = groupsFor(view);
+    const sizes = [...new Set(groups.map(g => g.size))];
+    $("wells").replaceChildren(...sizes.map(size => {
+      const s = sizeInfo(size);
+      const chip = el("span", { className: "chip" });
+      chip.style.setProperty("--c", s.color);
+      const lines = el("ul", { className: "lines" }, groups.filter(g => g.size === size).map(g => {
+        const btn = el("button", { className: "line", type: "button" });
+        btn.dataset.group = g.id;
+        const count = EDITING ? `${placed(view, g)} of ${qtyOf(g)} placed` : `${qtyOf(g)} × ${g.name}`;
+        btn.append(EDITING ? g.name : count);
+        if (EDITING) btn.append(el("small", { textContent: count }));
+        if (g.note) btn.append(el("small", { textContent: g.note }));
+        if (!g.added && g.fromDell !== false && qtyOf(g) !== g.qty) btn.append(el("small", { textContent: `Dell's screw list says ${g.qty}` }));
+        if (EDITING) {
+          btn.setAttribute("aria-pressed", g.id === selectedGroup);
+          btn.addEventListener("click", () => { selectedGroup = g.id; selectedPin = null; renderTray(); renderPins(); status(); });
+        } else {
+          btn.setAttribute("aria-pressed", g.id === lockedGroup);
+          btn.addEventListener("pointerenter", () => { hoverGroup = g.id; applyHighlight(); });
+          btn.addEventListener("pointerleave", () => { hoverGroup = null; applyHighlight(); });
+          btn.addEventListener("focus", () => { hoverGroup = g.id; applyHighlight(); });
+          btn.addEventListener("blur", () => { hoverGroup = null; applyHighlight(); });
+          btn.addEventListener("click", () => {
+            lockedGroup = lockedGroup === g.id ? null : g.id;
+            document.querySelectorAll(".line").forEach(l => l.setAttribute("aria-pressed", l.dataset.group === lockedGroup));
+            applyHighlight();
+          });
+        }
+        if (EDITING) {
+          const tool = (text, label, fn) => {
+            const b = el("button", { className: "line-del", type: "button", textContent: text });
+            b.setAttribute("aria-label", label);
+            b.addEventListener("click", fn);
+            return b;
+          };
+          const tools = el("div", { className: "line-tools" },
+            tool("−", `One fewer ${g.name} screw`, () => setQty(g, qtyOf(g) - 1)),
+            tool("+", `One more ${g.name} screw`, () => setQty(g, qtyOf(g) + 1)),
+            g.added ? tool("Delete", `Delete ${g.name} and its pins`, () => deleteGroup(g)) : null);
+          return el("li", { className: "line-row" }, btn, tools);
+        }
+        return el("li", {}, btn);
+      }));
+      let art = screwArt(size);
+      if (s.photo) {
+        art = el("img", { className: "well-photo", src: `images/${s.photo}.jpg`, alt: "" });
+        art.onerror = () => art.replaceWith(screwArt(size));
+      }
+      return el("div", { className: "well" }, art,
+        el("div", { className: "well-size" }, chip, size),
+        s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null, lines);
+    }));
+  }
+
+  function renderFoot() {
+    const foot = $("tray-foot");
+    foot.replaceChildren("For the 3110 laptop, not the 2-in-1. The strip above the photo shows every screw at the same scale. The close-ups here are not to scale. Sizes come from ",
+      el("a", { href: DATA.sourceUrl, textContent: "Dell's screw list", target: "_blank", rel: "noopener" }), ".");
+  }
+
+  /* Editor */
+  function nextOpenGroup() {
+    const groups = groupsFor(view);
+    const open = groups.find(g => placed(view, g) < qtyOf(g));
+    return (open || groups[0]).id;
+  }
+
+
+  function status(message) {
+    if (!EDITING || !isStep(view)) return;
+    $("undo").disabled = !undoStack.length;
+    $("remove").disabled = !selectedPin;
+    $("discard").hidden = store.read() == null;
+    if (message) { $("status").textContent = message; return; }
+    if (!photoEl) { $("status").textContent = "This step needs its photo before you can place pins."; return; }
+    if (selectedPin) { $("status").textContent = "Pin selected. Drag it, nudge it with the arrow keys, or remove it."; return; }
+    const g = groupOf(selectedGroup);
+    $("status").textContent = placed(view, g) >= qtyOf(g)
+      ? `${g.name}: all ${qtyOf(g)} placed. Pick another line in the tray, or use + to add one.`
+      : `Click the photo to place ${g.size} for ${g.name}. ${placed(view, g)} of ${qtyOf(g)} placed.`;
+  }
+
+  function render() {
+    renderSteps();
+    $("start").hidden = view !== START;
+    $("count").hidden = view !== COUNT;
+    $("work").hidden = !isStep(view);
+    if (view === START) { renderStart(); return; }
+    if (view === COUNT) { renderCount(); return; }
+    renderTray(); renderBanner(); renderStage(); status();
+  }
+
+  addEventListener("hashchange", () => {
+    const v = TABS.find(x => "#" + x.id === location.hash) || START;
+    if (v !== view) go(v);
+  });
+
+  /* Start */
+  $("labels").addEventListener("change", renderPins);
+  document.addEventListener("keydown", e => {
+    if (!isStep(view)) return;
+    if (e.key === "Escape" && !EDITING) { lockedPin = lockedGroup = lockedSize = null; hideTip(); renderTray(); applyHighlight(); }
+    if (EDITING && (e.ctrlKey || e.metaKey) && e.key === "z") { e.preventDefault(); undo(); }
+  });
+  document.addEventListener("click", e => {
+    if (EDITING || !lockedPin || e.target.closest(".pin")) return;
+    lockedPin = null; hideTip();
+  });
+
+  if (isStep(view)) selectedGroup = nextOpenGroup();
+  renderFoot();
+  render();
+})();
+</script>
+</body>
+</html>
