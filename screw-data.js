@@ -5,10 +5,12 @@
   Not shown: WWAN card (1 x M2x3, LTE models only).
 
   sizes:  one entry per screw type. d = shaft diameter in mm, l = length in mm.
+          mixup = the warning shown for screws that are easy to confuse.
           photo = close-up in images/screws. look = what students should look for.
   banner: the line-up photo of every screw. x = center of each screw pair and
           w = its width, both in percent of the photo's width.
   parts:  the start page list. x, y = where each number sits on the diagram, in percent.
+          step and groups = the step it opens and the screws it lights up there.
   views:  one entry per teardown step, in order.
           photo = file name in the images folder, without the extension.
   groups: the screws in that step. qty is how many Dell lists for the group, or how many
@@ -21,17 +23,25 @@ window.SCREW_DATA = {
   sourceUrl: "https://www.dell.com/support/manuals/en-us/chromebook-11-3110-laptop/chromebook_3110_sm/screw-list?guid=guid-cc648b28-fbf9-4a6f-bb11-4c6c2fa3d08a&lang=en-us",
 
   sizes: {
-    "M2x3":      { key: "A", color: "#F2C230", d: 2,   l: 3,    photo: "screws/1-m2x3",       look: "Silver" },
-    "M2x2":      { key: "W", color: "#C7B8FF", d: 2,   l: 2,    photo: "screws/2-m2x2",        look: "Silver, with an extra-wide head" },
-    "M2.5x2.5":  { key: "C", color: "#62D2F2", d: 2.5, l: 2.5,  photo: "screws/3-m2.5x2.5",   look: "Black, with an extra-wide head" },
-    "M2x4":      { key: "B", color: "#FF8A4C", d: 2,   l: 4,    photo: "screws/4-m2x4",       look: "Black. The most common screw in this Chromebook." },
-    "M2.5x3.8":  { key: "D", color: "#F5A3D6", d: 2.5, l: 3.8,  photo: "screws/5-m2.5x3.8",   look: "Black" },
-    "M2.5x5":    { key: "E", color: "#83E592", d: 2.5, l: 5,    photo: "screws/6-m2.5x5",     look: "Black" },
-    "Captive":   { key: "F", color: "#FFFFFF", d: null, l: null, photo: "screws/7-captive",   look: "Black and long, with a smooth neck below the threads" }
+    "M2x3":      { key: "A", color: "#F2C230", d: 2,   l: 3,    photo: "screws/1-m2x3",       look: "Silver", mixup: "Looks like M2x4, which is black. This one is silver." },
+    "M2x2":      { key: "W", color: "#C7B8FF", d: 2,   l: 2,    photo: "screws/2-m2x2",        look: "Silver, with an extra-wide head", mixup: "Looks like M2.5x2.5, which is black. This one is silver." },
+    "M2.5x2.5":  { key: "C", color: "#62D2F2", d: 2.5, l: 2.5,  photo: "screws/3-m2.5x2.5",   look: "Black, with an extra-wide head", mixup: "Looks like M2x2, which is silver. This one is black." },
+    "M2x4":      { key: "B", color: "#FF8A4C", d: 2,   l: 4,    photo: "screws/4-m2x4",       look: "Black. The most common screw in this Chromebook.", mixup: "Looks like M2x3, which is silver. This one is black." },
+    "M2.5x3.8":  { key: "D", color: "#F5A3D6", d: 2.5, l: 3.8,  photo: "screws/5-m2.5x3.8",   look: "Black", mixup: "Easy to mix up with the M2.5x5 hinge screws. This one is about 1 mm shorter." },
+    "M2.5x5":    { key: "E", color: "#83E592", d: 2.5, l: 5,    photo: "screws/6-m2.5x5",     look: "Black", mixup: "Easy to mix up with the M2.5x3.8 bezel screws. This one is about 1 mm longer." },
+    "Captive":   { key: "F", color: "#FFFFFF", d: null, l: null, photo: "screws/7-captive",   title: "M2.5x4+2.5", look: "Black and long. Only part of the shaft is threaded, so it stays in the cover and does not come out" }
   },
+
+  /* Screws students mix up most, shown side by side on the Screw count page. */
+  mixups: [
+    { a: "M2.5x5", b: "M2.5x3.8", text: "Both are black and the same thickness. The hinge screw (M2.5x5) is about 1 mm longer than the bezel screw. Sort them before you take the display apart." },
+    { a: "M2x2", b: "M2.5x2.5", text: "Both have wide, thin heads. Silver M2x2 goes in the touchpad. Black M2.5x2.5 goes in the display hinges." },
+    { a: "M2x3", b: "M2x4", text: "Both are small and the same thickness. M2x3 is silver. M2x4 is black and a little longer." }
+  ],
 
   banner: {
     photo: "screws/banner",
+    ratio: 13.702,          // photo width divided by height
     items: [
       { size: "M2x3",      x: 5.34,  w: 9.55 },
       { size: "M2x2",      x: 20.79, w: 10.11 },
@@ -43,14 +53,14 @@ window.SCREW_DATA = {
     ]
   },
 
-  diagram: { photo: "exploded-view.png", credit: "Diagram from Dell's Chromebook 3110 Service Manual" },
+  diagram: { photo: "exploded-view.jpg", credit: "Diagram from Dell's Chromebook 3110 Service Manual" },
   parts: [
-    { n: 1, name: "Bottom Plate / Base Cover", step: "bottom", x: 84.6, y: 14.6, text: "Nine captive screws. Loosen them and they stay in the cover." },
-    { n: 2, name: "Motherboard / System Board", step: "inside", x: 84.6, y: 39.6, text: "M2x4 screws, plus the brackets over its ports and cables." },
-    { n: 3, name: "Battery - Type YRDD6", step: "inside", x: 84.6, y: 49.9, text: "Three M2x4 screws. Unplug it before anything else." },
-    { n: 4, name: "Speakers", step: "inside", x: 84.6, y: 56.9, text: "No screws. They sit in rubber grommets." },
-    { n: 5, name: "Palmrest Assembly / Computer Chassis", step: "under-battery", x: 84.6, y: 68.4, text: "Everything mounts to it. The touchpad screws are under the battery." },
-    { n: 6, name: "Display assembly", step: "bezel", x: 84.6, y: 84.2, text: "Six M2.5x5 hinge screws, then the bezel, panel and hinges." }
+    { n: 1, name: "Bottom Plate / Base Cover", step: "bottom", groups: ["base-cover"], x: 94.6, y: 12.46, text: "Nine captive screws. Loosen them and they stay in the cover." },
+    { n: 2, name: "Motherboard / System Board", step: "inside", groups: ["board-usba", "display-cable", "io-right", "io-left-small", "io-left-large", "wlan"], x: 94.6, y: 37.89, text: "Seven M2x4 screws, plus the brackets over its ports and cables." },
+    { n: 3, name: "Battery - Type YRDD6", step: "inside", groups: ["battery"], x: 94.6, y: 48.43, text: "Three M2x4 screws. Unplug it before anything else." },
+    { n: 4, name: "Speakers", step: null, groups: [], x: 94.6, y: 55.5, text: "No screws. They sit in rubber grommets." },
+    { n: 5, name: "Palmrest Assembly / Computer Chassis", step: "under-battery", groups: ["touchpad-bracket", "touchpad-wide"], x: 94.6, y: 67.18, text: "Everything mounts to it. The touchpad screws are under the battery." },
+    { n: 6, name: "Display assembly", step: "inside", groups: ["display-assembly"], x: 94.6, y: 83.18, text: "Six M2.5x5 hinge screws hold it to the palmrest. The bezel, panel and hinges come after." }
   ],
 
   views: [

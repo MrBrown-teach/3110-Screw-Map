@@ -68,8 +68,26 @@ main {
 }
 .bench { min-width: 0; }
 .bench-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 14px; margin-bottom: 8px; min-height: 28px; }
-h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
-.setup { margin: 0; color: var(--mat-soft); max-width: 70ch; }
+h2 { margin: 0; font-size: 23px; line-height: 1.2; font-weight: 700; }
+.setup { margin: 0; font-size: 18px; color: var(--mat-ink); max-width: 70ch; }
+.howto {
+  margin: 0 0 10px; padding: 9px 14px; font-size: 19px; line-height: 1.3; font-weight: 700; color: #fff;
+  background: var(--mat-deep); border-left: 6px solid var(--focus); border-radius: 8px;
+}
+.editing .howto { display: none; }
+.guide { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.guide li { display: flex; align-items: center; gap: 8px; }
+.guide b {
+  flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--focus); color: var(--ink); font-size: 15px; line-height: 1;
+}
+.showing {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin: 0 0 10px; padding: 7px 8px 7px 12px;
+  background: var(--focus); color: var(--ink); border-radius: 8px; font-weight: 700;
+}
+.showing .btn { background: var(--ink); color: #fff; padding: 4px 10px; }
+.part.nolink { cursor: default; }
+.part.nolink small { color: var(--ink-soft); }
 
 .stage { position: relative; display: flex; justify-content: center; }
 .photo { position: relative; flex: none; touch-action: pan-y; }
@@ -156,29 +174,43 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
 
 /* Screw line-up strip */
 .strip { margin: 0 0 10px; overflow-x: auto; scrollbar-width: thin; }
-.strip-inner { min-width: 640px; background: #E7E9E8; border-radius: 8px; padding: 4px 6px 3px; box-shadow: 0 6px 16px rgba(8, 32, 41, .35); }
-.strip-photo { position: relative; }
-.strip-photo img { display: block; width: 100%; height: auto; border-radius: 4px; user-select: none; -webkit-user-drag: none; }
+.strip-inner {
+  --h: 104px;
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; padding: 8px 12px;
+  background: #E7E9E8; color: var(--ink); border-radius: 8px; box-shadow: 0 6px 16px rgba(8, 32, 41, .35);
+}
+.strip-tiles { display: flex; gap: 8px; }
 .bscrew {
-  position: absolute; top: 0; bottom: 0; padding: 0; margin: 0; cursor: pointer;
-  background: transparent; border: 0; border-radius: 7px; transition: background-color .12s ease, box-shadow .12s ease;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 3px; margin: 0; cursor: pointer;
+  background: transparent; border: 0; border-radius: 8px; color: var(--ink); transition: box-shadow .12s ease, opacity .12s ease;
 }
-.strip.dim .bscrew:not(.on) { background: rgba(231, 233, 232, .78); }
+.btile-img { display: block; height: var(--h); background-repeat: no-repeat; border-radius: 5px; }
+.strip.dim .bscrew:not(.on) { opacity: .35; }
 .bscrew.on { box-shadow: inset 0 0 0 3px var(--ink), inset 0 0 0 6px var(--c); }
-.strip-labels { position: relative; height: 24px; }
-.blabel {
-  position: absolute; top: 2px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px;
-  font-size: 14.5px; font-weight: 700; line-height: 1; color: var(--ink); white-space: nowrap; pointer-events: none;
-}
-.blabel .chip { width: 18px; height: 18px; font-size: 11px; }
-.blabel.absent { opacity: .45; }
-.bscrew.absent { background: rgba(231, 233, 232, .55); }
-.strip.dim .blabel:not(.on) { opacity: .3; }
+.blabel { display: flex; align-items: center; gap: 5px; font-size: 16px; font-weight: 700; line-height: 1; white-space: nowrap; padding-bottom: 3px; }
+.blabel .chip { width: 18px; height: 18px; }
+@media (max-height: 820px) { .strip-inner { --h: 76px; padding: 6px 10px; } .howto { padding: 7px 12px; margin-bottom: 8px; } }
+.strip-note { flex: 1 1 200px; margin: 0 0 6px; font-size: 15px; line-height: 1.3; color: var(--ink-soft); }
+.strip-note a { color: var(--mat); font-weight: 700; }
 
 /* Screw count page */
 .count { flex: 1; width: 100%; max-width: 1240px; padding: 12px 20px 20px; }
 .count > h2 { font-size: 24px; }
 .count > p { margin: 2px 0 12px; color: var(--mat-soft); }
+.apart { margin: 0 0 18px; padding: 14px; background: var(--tray); color: var(--ink); border-radius: var(--radius-tray); box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
+.apart h3 { margin: 0 0 4px; font-size: 21px; }
+.apart > p { margin: 0 0 12px; max-width: 75ch; line-height: 1.35; }
+.pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 10px; margin-bottom: 12px; }
+.pair { padding: 10px; background: #fff; border-radius: var(--radius-well); }
+.pair-tiles { --h: 74px; display: flex; justify-content: center; gap: 14px; margin-bottom: 8px; padding: 6px; background: #E7E9E8; border-radius: 6px; }
+.pair-tiles figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.pair-tiles figcaption { display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 16px; }
+.pair p { margin: 0; line-height: 1.3; }
+.rules { margin: 0; padding: 10px 12px 10px 30px; background: var(--well); border: 1px solid var(--well-edge); border-radius: var(--radius-well); line-height: 1.35; }
+.rules li + li { margin-top: 4px; }
+.rules strong { color: #8A2A1E; }
+.mixup { margin: 4px 0 0; padding: 4px 7px; font-size: 14.5px; line-height: 1.25; font-weight: 700; color: var(--ink); background: #FFF1B8; border-radius: 5px; }
+.tip .mixup { font-size: 15px; }
 .count-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: 14px; align-items: start; }
 .count-card {
   display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 4px 12px; padding: 12px;
@@ -193,37 +225,41 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
 .count-card .line small { color: var(--mat); font-weight: 700; }
 .count-card .line small.note { color: var(--ink-soft); font-weight: 500; }
 
-/* Start page */
-.start {
-  flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px;
-  padding: 12px 20px 20px; align-items: start; width: 100%; max-width: 1240px;
+/* Start page: the diagram and the parts list are two cards of the same size, side by side. */
+.start { flex: 1; width: 100%; padding: 12px 20px 16px; }
+.start-cards {
+  --art-h: max(440px, calc(100vh - 300px));
+  --card-w: calc(var(--art-h) * 770 / 1400 + 40px);
+  display: flex; justify-content: center; align-items: stretch; gap: 20px;
 }
-.diagram { margin: 0; padding: 14px; background: #fff; border-radius: var(--radius-tray); box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
-.diagram-art { position: relative; width: min(100%, 472px, calc((100vh - 190px) * .756)); margin: 0 auto; }
-.diagram-art img { display: block; width: 100%; height: auto; }
+.diagram, .parts { width: var(--card-w); flex: none; border-radius: var(--radius-tray); box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
+.diagram { margin: 0; padding: 14px 20px 10px; background: #fff; }
+.diagram-art { position: relative; height: var(--art-h); aspect-ratio: 770 / 1400; margin: 0 auto; }
+.diagram-art img { display: block; width: 100%; height: 100%; }
 .callout {
-  position: absolute; width: 30px; height: 30px; padding: 0; transform: translate(-50%, -50%);
+  position: absolute; width: 34px; height: 34px; padding: 0; transform: translate(-50%, -50%);
   background: none; border: 3px solid transparent; border-radius: 50%; cursor: pointer;
 }
 .callout:hover, .callout.on { border-color: var(--mat); box-shadow: 0 0 0 3px var(--focus); }
-.diagram figcaption { margin-top: 8px; font-size: 14px; color: var(--ink-soft); text-align: center; }
-.parts { background: var(--tray); color: var(--ink); border-radius: var(--radius-tray); padding: 16px; box-shadow: 0 8px 20px rgba(8, 32, 41, .4); }
-.parts h2 { font-size: 24px; }
-.parts > p { margin: 4px 0 12px; color: var(--ink-soft); max-width: 60ch; }
-.parts ol { list-style: none; margin: 0 0 14px; padding: 0; }
+.diagram figcaption { margin-top: 6px; font-size: 14px; color: var(--ink-soft); text-align: center; }
+.parts { display: flex; flex-direction: column; padding: 14px; background: var(--tray); color: var(--ink); }
+.parts h2 { margin: 2px 2px 10px; font-size: 22px; }
+.parts ol { flex: 1; display: flex; flex-direction: column; gap: 6px; list-style: none; margin: 0 0 12px; padding: 0; }
+.parts li { flex: 1; display: flex; }
 .part {
-  display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 0 10px; width: 100%; padding: 8px; margin: 0 0 4px;
+  flex: 1; display: grid; grid-template-columns: 34px minmax(0, 1fr); align-content: center; gap: 1px 10px; width: 100%; padding: 6px 10px;
   text-align: left; background: var(--well); border: 1px solid var(--well-edge); border-radius: var(--radius-well); cursor: pointer; color: var(--ink);
 }
 .part:hover, .part.on { background: #fff; }
 .part b {
-  grid-row: span 3; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  grid-row: span 3; align-self: center; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
   background: var(--mat); color: #fff; font-size: 16px; line-height: 1;
 }
 .part strong { font-size: 18px; line-height: 1.2; }
-.part span { line-height: 1.3; color: var(--ink-soft); }
-.part small { font-size: 14px; font-weight: 700; color: var(--mat); margin-top: 2px; }
-.parts .btn { font-size: 18px; padding: 9px 18px; }
+.part span { display: none; line-height: 1.25; color: var(--ink-soft); }
+.part small { font-size: 14.5px; font-weight: 700; color: var(--mat); }
+.parts .btn { align-self: stretch; font-size: 19px; padding: 10px 18px; }
+@media (min-height: 900px) { .part span { display: block; } .part.nolink small { display: none; } }
 
 /* Pin editor */
 .editbar { display: none; }
@@ -258,12 +294,18 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
   .count { padding: 10px 16px 16px; }
   .count-card { grid-template-columns: 110px minmax(0, 1fr); }
   .count-card > img, .count-card > svg { width: 110px; height: 74px; }
-  .start { grid-template-columns: minmax(0, 1fr); padding: 10px 16px 16px; }
-  .diagram-art { width: min(100%, 472px); }
+  .start { padding: 10px 16px 16px; }
+  .start-cards { flex-direction: column; align-items: center; }
+  .diagram, .parts { width: min(100%, 520px); }
+  .diagram-art { height: auto; width: 100%; }
+  .part span { display: block; }
+  .part.nolink small { display: none; }
   header { padding: 12px 16px 0; }
   main { grid-template-columns: minmax(0, 1fr); padding: 10px 16px 16px; }
   .pin { --size: 23px; font-size: 13px; }
   .setup { max-width: none; }
+  .strip-inner { --h: 78px; }
+  .howto { font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { .pin, .bscrew { transition: none; } }
 </style>
@@ -275,21 +317,40 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
 </header>
 
 <section class="start" id="start" hidden>
-  <figure class="diagram">
-    <div class="diagram-art" id="diagram-art"></div>
-    <figcaption id="diagram-credit"></figcaption>
-  </figure>
-  <div class="parts">
-    <h2>What's inside</h2>
-    <p>Pick a part to see the screws that hold it, or start the teardown from the bottom.</p>
-    <ol id="parts-list"></ol>
-    <button class="btn go" id="begin" type="button">Start teardown</button>
+  <div class="bench-head"><h2>Start here</h2><p class="setup">New here? This site shows where every screw goes, step by step.</p></div>
+  <ol class="howto guide" aria-label="How to use this site">
+    <li><b>1</b>Pick a part, or press Start teardown</li>
+    <li><b>2</b>Hover over or tap a dot to see that screw</li>
+    <li><b>3</b>Match your screw to the photo strip</li>
+  </ol>
+  <div class="start-cards">
+    <figure class="diagram">
+      <div class="diagram-art" id="diagram-art"></div>
+      <figcaption id="diagram-credit"></figcaption>
+    </figure>
+    <div class="parts">
+      <h2>What's inside</h2>
+      <ol id="parts-list"></ol>
+      <button class="btn go" id="begin" type="button">Start teardown</button>
+    </div>
   </div>
 </section>
 
 <section class="count" id="count" hidden>
   <h2>Every screw in this Chromebook</h2>
   <p id="count-total"></p>
+  <section class="apart" aria-labelledby="apart-title">
+    <h3 id="apart-title">Telling screws apart</h3>
+    <p>Screw sizes read as thickness × length in millimeters. M2x4 is 2 mm thick and 4 mm long. This Chromebook uses two thicknesses, M2 and M2.5. The difference is only half a millimeter, so compare screws side by side instead of by eye. These are the pairs that get mixed up most, shown at the same scale.</p>
+    <div class="pairs" id="pairs"></div>
+    <ul class="rules">
+      <li><strong>If a screw spins without catching, or stops before its head sits flat, stop.</strong> It's probably the wrong screw. Never force it.</li>
+      <li>Too thin, and it never tightens. Too thick, and it ruins the threads in the hole for good.</li>
+      <li>Too long, and the tip can push into the part underneath, like the keyboard, the board or the battery.</li>
+      <li>The red patch on the threads helps a screw stay tight, so some screws feel snug going in. That's normal.</li>
+      <li>Keep each step's screws in their own cup or section of the mat, and put them back in reverse order.</li>
+    </ul>
+  </section>
   <div class="count-list" id="count-list"></div>
 </section>
 
@@ -299,10 +360,12 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
       <h2 id="view-title"></h2>
       <p class="setup" id="setup"></p>
     </div>
+    <p class="howto">Hover over or tap a dot to see the screw's size and what it holds. Tap a screw in the strip to see everywhere it goes.</p>
+    <p class="showing" id="showing" hidden><span id="showing-text"></span><button class="btn" id="show-all" type="button">Show all screws</button></p>
     <div class="strip" id="strip">
       <div class="strip-inner">
-        <div class="strip-photo" id="strip-photo"></div>
-        <div class="strip-labels" id="strip-labels"></div>
+        <div class="strip-tiles" id="strip-tiles"></div>
+        <p class="strip-note">The screws used in this step, shown at the same scale. See every screw on the <a href="#count">Screw count</a> page.</p>
       </div>
     </div>
     <div class="stage" id="stage"></div>
@@ -340,6 +403,7 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
   let hoverGroup = null;         // student mode: the tray line under the pointer
   let hoverSize = null;          // student mode: the screw in the line-up strip under the pointer
   let lockedSize = null;         // student mode: the screw in the strip opened by tap or click
+  let lockedPart = null;         // student mode: the start page part whose screws are lit
   let selectedGroup = null;      // editor: the group new pins go to
   let selectedPin = null;        // editor: the pin Remove and arrow keys act on
   const undoStack = [];
@@ -373,7 +437,8 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
       d: m ? +m[1] : null, l: m ? +m[2] : null, unknown: !m, extra: true
     });
   }
-  const sizeTitle = size => size === "Captive" ? "Captive screw" : size;
+  const sizeName = size => (DATA.sizes[size] && DATA.sizes[size].title) || size;
+  const sizeTitle = size => size === "Captive" ? `${sizeName(size)} captive screw` : size;
   const lookText = s => [s.look, s.label].filter(Boolean).map(t => t.replace(/\.$/, "")).join(". ");
   const normalizeSize = text => text.trim().replace(/\s+/g, "").replace(/^m/, "M").replace(/[X×*]/, "x");
 
@@ -440,7 +505,7 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
   });
 
   function go(v) {
-    view = v; lockedPin = lockedGroup = hoverGroup = hoverSize = lockedSize = selectedPin = null;
+    view = v; lockedPin = lockedGroup = hoverGroup = hoverSize = lockedSize = lockedPart = selectedPin = null;
     selectedGroup = isStep(v) ? nextOpenGroup() : null;
     if (!isStep(v)) photoEl = null;
     history.replaceState(null, "", location.pathname + location.search + (v === START ? "" : "#" + v.id));
@@ -503,12 +568,12 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
       const g = groupOf(pin.g);
       if (!g) return;
       const s = sizeInfo(g.size);
-      const btn = el("button", { className: "pin", type: "button", textContent: $("labels").checked ? g.size : "" });
+      const btn = el("button", { className: "pin", type: "button", textContent: $("labels").checked ? sizeName(g.size) : "" });
       btn.style.left = pin.x + "%";
       btn.style.top = pin.y + "%";
       btn.style.setProperty("--c", s.color);
       btn.dataset.group = g.id;
-      btn.setAttribute("aria-label", `${g.size}. ${g.name}. ${g.holds}`);
+      btn.setAttribute("aria-label", `${sizeTitle(g.size)}. ${g.name}. ${g.holds}`);
       btn._pin = pin;
       if (pin === selectedPin) btn.classList.add("picked");
       if (EDITING) {
@@ -537,6 +602,7 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
       s.photo ? el("img", { className: "tip-photo", src: `images/${s.photo}.jpg`, alt: "" }) : null,
       line("tip-size", sizeTitle(g.size)),
       s.look ? line("tip-look", lookText(s)) : null,
+      s.mixup ? line("mixup", s.mixup) : null,
       line("tip-name", g.name),
       line("tip-holds", g.holds),
       line("tip-qty", `${qtyOf(g)} ${qtyOf(g) === 1 ? "screw" : "screws"} in this group`));
@@ -565,53 +631,63 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
   /* A tray line or pin lights up one group. A screw in the strip lights up every group of that size. */
   function applyHighlight() {
     if (EDITING) return;
+    const partOn = lockedPart && !hoverSize && !hoverGroup && !lockedGroup && !lockedSize;
     const activeGroup = hoverSize ? null : (hoverGroup || lockedGroup);
     const ag = activeGroup && groupOf(activeGroup);
     const activeSize = hoverSize || (ag ? ag.size : lockedSize);
-    const lit = id => activeGroup ? id === activeGroup : !!activeSize && (groupOf(id) || {}).size === activeSize;
+    const partSizes = partOn ? new Set(lockedPart.groups.map(id => (groupOf(id) || {}).size)) : null;
+    const lit = id => partOn ? lockedPart.groups.includes(id)
+      : activeGroup ? id === activeGroup : !!activeSize && (groupOf(id) || {}).size === activeSize;
     const stage = $("stage");
-    stage.classList.toggle("dim", !!(activeGroup || activeSize));
+    stage.classList.toggle("dim", !!(partOn || activeGroup || activeSize));
     stage.querySelectorAll(".pin").forEach(p => p.classList.toggle("on", lit(p.dataset.group)));
     document.querySelectorAll(".line").forEach(l => l.classList.toggle("on", lit(l.dataset.group)));
-    $("strip").classList.toggle("dim", !!activeSize);
-    document.querySelectorAll(".bscrew, .blabel").forEach(b => b.classList.toggle("on", b.dataset.size === activeSize));
+    $("strip").classList.toggle("dim", !!(partOn || activeSize));
+    document.querySelectorAll(".bscrew, .blabel").forEach(b => b.classList.toggle("on", partOn ? partSizes.has(b.dataset.size) : b.dataset.size === activeSize));
+    $("showing").hidden = !lockedPart;
+    if (lockedPart) $("showing-text").textContent = `Showing the screws for: ${lockedPart.name}`;
   }
 
-  /* Line-up strip: one photo of every screw, with a bracket around the one in use. */
+  /* One screw cut from the line-up photo. Its height comes from --h, so tiles always share a scale. */
+  function screwTile(size) {
+    const B = DATA.banner, it = B.items.find(i => i.size === size);
+    const img = el("span", { className: "btile-img" });
+    Object.assign(img.style, {
+      width: `calc(var(--h) * ${B.ratio * it.w / 100})`,
+      backgroundImage: `url("images/${B.photo}.jpg")`,
+      backgroundSize: `calc(var(--h) * ${B.ratio}) var(--h)`,
+      backgroundPosition: `calc(var(--h) * ${-B.ratio * (it.x - it.w / 2) / 100}) 0`
+    });
+    return img;
+  }
+
+  /* Screw strip: the screws this step uses, cut from one line-up photo so they all share a scale. */
   function renderBanner() {
-    const B = DATA.banner, box = $("strip-photo"), labels = $("strip-labels");
+    const B = DATA.banner, tiles = $("strip-tiles");
     if (!B) { $("strip").hidden = true; return; }
-    if (!box.querySelector("img")) {
-      const img = el("img", { src: `images/${B.photo}.jpg`, alt: "Every screw in this Chromebook, lined up side by side", draggable: false });
-      img.onerror = () => { $("strip").hidden = true; };
-      box.append(img);
-    }
     const used = new Set(groupsFor(view).map(g => g.size));
-    box.querySelectorAll(".bscrew").forEach(b => b.remove());
-    labels.replaceChildren();
-    B.items.forEach(it => {
+    const items = B.items.filter(it => used.has(it.size));
+    $("strip").hidden = !items.length;
+    tiles.replaceChildren(...items.map(it => {
       const s = sizeInfo(it.size);
-      const b = el("button", { className: "bscrew", type: "button" });
-      Object.assign(b.style, { left: (it.x - it.w / 2) + "%", width: it.w + "%" });
+      const img = screwTile(it.size);
+      const chip = el("span", { className: "chip" });
+      chip.style.setProperty("--c", s.color);
+      const label = el("span", { className: "blabel" }, chip, sizeName(it.size));
+      label.dataset.size = it.size;
+      const b = el("button", { className: "bscrew", type: "button" }, img, label);
       b.style.setProperty("--c", s.color);
       b.dataset.size = it.size;
-      b.setAttribute("aria-label", `${sizeTitle(it.size)}. ${lookText(s)}${used.has(it.size) ? "" : " Not used in this step."}`);
-      if (!used.has(it.size)) b.classList.add("absent");
+      b.setAttribute("aria-label", `${sizeTitle(it.size)}. ${lookText(s)}`);
       if (!EDITING) {
         b.addEventListener("pointerenter", () => { hoverSize = it.size; applyHighlight(); });
         b.addEventListener("pointerleave", () => { hoverSize = null; applyHighlight(); });
         b.addEventListener("focus", () => { hoverSize = it.size; applyHighlight(); });
         b.addEventListener("blur", () => { hoverSize = null; applyHighlight(); });
-        b.addEventListener("click", () => { lockedSize = lockedSize === it.size ? null : it.size; lockedGroup = null; applyHighlight(); });
+        b.addEventListener("click", () => { lockedSize = lockedSize === it.size ? null : it.size; lockedGroup = lockedPart = null; applyHighlight(); });
       }
-      box.append(b);
-      const chip = el("span", { className: "chip" });
-      chip.style.setProperty("--c", s.color);
-      const label = el("span", { className: "blabel" + (used.has(it.size) ? "" : " absent") }, chip, it.size);
-      label.style.left = it.x + "%";
-      label.dataset.size = it.size;
-      labels.append(label);
-    });
+      return b;
+    }));
   }
 
   /* Start page */
@@ -626,6 +702,7 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
     DATA.parts.forEach(p => {
       const step = DATA.views.find(v => v.id === p.step);
       const n = DATA.views.indexOf(step) + 1;
+      const where = step ? `Step ${n}: ${step.tab}` : "No screws to remove";
       const wire = (node, label) => {
         node.dataset.part = p.n;
         node.setAttribute("aria-label", label);
@@ -633,22 +710,26 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
         node.addEventListener("pointerleave", () => markPart(null));
         node.addEventListener("focus", () => markPart(p.n));
         node.addEventListener("blur", () => markPart(null));
-        node.addEventListener("click", () => go(step));
+        if (step) node.addEventListener("click", () => openPart(p, step));
       };
       const callout = el("button", { className: "callout", type: "button" });
       Object.assign(callout.style, { left: p.x + "%", top: p.y + "%" });
-      wire(callout, `${p.n}. ${p.name}. Go to step ${n}, ${step.tab}`);
+      wire(callout, `${p.n}. ${p.name}. ${step ? "Show its screws in step " + n + ", " + step.tab : p.text}`);
       art.append(callout);
-      const btn = el("button", { className: "part", type: "button" },
+      const btn = el("button", { className: "part" + (step ? "" : " nolink"), type: "button" },
         el("b", { textContent: p.n }), el("strong", { textContent: p.name }), el("span", { textContent: p.text }),
-        el("small", { textContent: `Step ${n}: ${step.tab}` }));
-      wire(btn, `${p.n}. ${p.name}. ${p.text} Go to step ${n}, ${step.tab}`);
+        el("small", { textContent: where }));
+      wire(btn, `${p.n}. ${p.name}. ${p.text} ${step ? "Show its screws in step " + n + ", " + step.tab : ""}`);
       $("parts-list").append(el("li", {}, btn));
     });
     $("begin").addEventListener("click", () => go(DATA.views[0]));
   }
 
   /* Screw count page: every size, its total, and where each group goes. */
+  function openPart(p, step) {
+    go(step);
+    if (!EDITING && p.groups.length) { lockedPart = p; applyHighlight(); }
+  }
   function openGroup(v, g) {
     go(v);
     if (!EDITING) { lockedGroup = g.id; renderTray(); applyHighlight(); }
@@ -659,6 +740,15 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
     const sizes = [...new Set(order.concat(all.map(a => a.g.size)))].filter(z => all.some(a => a.g.size === z));
     const grand = all.reduce((n, a) => n + qtyOf(a.g), 0);
     $("count-total").textContent = `${grand} screws in all, in ${sizes.length} sizes. Pick a location to see those screws on the photo.`;
+    if (DATA.mixups && DATA.banner && !$("pairs").children.length) {
+      $("pairs").replaceChildren(...DATA.mixups.map(m => el("article", { className: "pair" },
+        el("div", { className: "pair-tiles" }, [m.a, m.b].map(z => {
+          const dot = el("span", { className: "chip" });
+          dot.style.setProperty("--c", sizeInfo(z).color);
+          return el("figure", {}, screwTile(z), el("figcaption", {}, dot, sizeName(z)));
+        })),
+        el("p", { textContent: m.text }))));
+    }
     $("count-list").replaceChildren(...sizes.map(size => {
       const s = sizeInfo(size), rows = all.filter(a => a.g.size === size);
       const n = rows.reduce((t, a) => t + qtyOf(a.g), 0);
@@ -677,7 +767,8 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
         return el("li", {}, btn);
       }));
       return el("article", { className: "count-card" }, art,
-        el("div", {}, el("h3", {}, dot, sizeTitle(size)), s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null),
+        el("div", {}, el("h3", {}, dot, sizeTitle(size)), s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null,
+          s.mixup ? el("p", { className: "mixup", textContent: s.mixup }) : null),
         el("div", { className: "count-num" }, String(n), el("span", { textContent: n === 1 ? " screw" : " screws" })),
         lines);
     }));
@@ -714,6 +805,7 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
           btn.addEventListener("blur", () => { hoverGroup = null; applyHighlight(); });
           btn.addEventListener("click", () => {
             lockedGroup = lockedGroup === g.id ? null : g.id;
+            lockedPart = null;
             document.querySelectorAll(".line").forEach(l => l.setAttribute("aria-pressed", l.dataset.group === lockedGroup));
             applyHighlight();
           });
@@ -739,14 +831,15 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
         art.onerror = () => art.replaceWith(screwArt(size));
       }
       return el("div", { className: "well" }, art,
-        el("div", { className: "well-size" }, chip, size),
-        s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null, lines);
+        el("div", { className: "well-size" }, chip, sizeName(size)),
+        s.look ? el("p", { className: "well-look", textContent: lookText(s) }) : null,
+        s.mixup ? el("p", { className: "mixup", textContent: s.mixup }) : null, lines);
     }));
   }
 
   function renderFoot() {
     const foot = $("tray-foot");
-    foot.replaceChildren("For the 3110 laptop, not the 2-in-1. The strip above the photo shows every screw at the same scale. The close-ups here are not to scale. Sizes come from ",
+    foot.replaceChildren("For the 3110 laptop, not the 2-in-1. The strip above the photo shows this step's screws at the same scale. The close-ups here are not to scale. Sizes come from ",
       el("a", { href: DATA.sourceUrl, textContent: "Dell's screw list", target: "_blank", rel: "noopener" }), ".");
   }
 
@@ -789,9 +882,10 @@ h2 { margin: 0; font-size: 21px; line-height: 1.2; font-weight: 700; }
 
   /* Start */
   $("labels").addEventListener("change", renderPins);
+  $("show-all").addEventListener("click", () => { lockedPart = lockedGroup = lockedSize = null; renderTray(); applyHighlight(); });
   document.addEventListener("keydown", e => {
     if (!isStep(view)) return;
-    if (e.key === "Escape" && !EDITING) { lockedPin = lockedGroup = lockedSize = null; hideTip(); renderTray(); applyHighlight(); }
+    if (e.key === "Escape" && !EDITING) { lockedPin = lockedGroup = lockedSize = lockedPart = null; hideTip(); renderTray(); applyHighlight(); }
     if (EDITING && (e.ctrlKey || e.metaKey) && e.key === "z") { e.preventDefault(); undo(); }
   });
   document.addEventListener("click", e => {
